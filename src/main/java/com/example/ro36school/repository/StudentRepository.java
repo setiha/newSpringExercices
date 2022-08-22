@@ -28,6 +28,7 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
     List<Student>findAllByDateOfBirthIsBetween(LocalDate first, LocalDate last);
 
     List<Student>findAll();
-
+     Boolean existsByEmail(String email);
+     Student findByEmail(String username);
 
 }

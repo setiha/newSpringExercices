@@ -1,10 +1,14 @@
 package com.example.ro36school.service.impl;
 
+import com.example.ro36school.dto.StudentCreateDTO;
 import com.example.ro36school.dto.StudentDTO;
 import com.example.ro36school.entity.Student;
 import com.example.ro36school.mapper.StudentMapper;
 import com.example.ro36school.repository.StudentRepository;
 import com.example.ro36school.service.StudentService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -14,13 +18,16 @@ import java.util.stream.Collectors;
 
 @Service
 public class StudentServiceImpl implements StudentService {
+    private static Logger LOGGER = LoggerFactory.getLogger(StudentServiceImpl.class);
 
     private final StudentRepository studentRepository;
     private final StudentMapper studentMapper;
+    private final PasswordEncoder ro36PasswordEncoder;
 
-    public StudentServiceImpl(StudentRepository studentRepository, StudentMapper studentMapper) {
+    public StudentServiceImpl(StudentRepository studentRepository, StudentMapper studentMapper, PasswordEncoder ro36PasswordEncoder) {
         this.studentRepository = studentRepository;
         this.studentMapper = studentMapper;
+        this.ro36PasswordEncoder = ro36PasswordEncoder;
     }
 
     @Override
@@ -73,6 +80,58 @@ public class StudentServiceImpl implements StudentService {
                         .isAfter(student2.getDateOfBirth()) ? student1 : student2);
         return youngestStudent.get();
     }
+
+    @Override
+    public StudentDTO createStudent(StudentCreateDTO createDTO) throws UnsupportedOperationException {
+        if (studentRepository.existsByEmail(createDTO.getEmail())) {
+            throw new UnsupportedOperationException(
+                    "User with given email: " + createDTO.getEmail() + " already exists!");
+        }
+        Student studentToSave = studentMapper.toEntity(createDTO);
+        //encode the password for security reasons
+        String encodedPassword = ro36PasswordEncoder.encode(studentToSave.getUserPassword());
+        studentToSave.setUserPassword(encodedPassword);
+
+        Student savedStudent = studentRepository.save(studentToSave);
+        StudentDTO studentDTO = studentMapper.toDto(savedStudent);
+        return studentDTO;
+
+    }
+
+    @Override
+    public StudentDTO updateStudentWithoutPassword(StudentDTO studentToBeUpdated) {
+        Optional<Student> oldStudentOptional = studentRepository.findById(studentToBeUpdated.getId());
+
+        if (oldStudentOptional.isPresent()) {
+            Student oldStudent = oldStudentOptional.get();
+            oldStudent.setFirstName(studentToBeUpdated.getFirstName());
+            oldStudent.setLastName(studentToBeUpdated.getLastName());
+            oldStudent.setClassId(studentToBeUpdated.getClassDTO().getId());
+            oldStudent.setEmail(studentToBeUpdated.getEmail());
+            oldStudent.setDateOfBirth(studentToBeUpdated.getDateOfBirth());
+            Student savedStudent = studentRepository.save(oldStudent);
+            StudentDTO studentDTO = studentMapper.toDto(savedStudent);
+
+            return studentDTO;
+        } else {
+            throw new UnsupportedOperationException("Invalid id " + studentToBeUpdated.getId());
+        }
+    }
+
+    @Override
+    public Integer deleteStudent(Integer id) {
+        if (studentRepository.existsById(id)) {
+            studentRepository.deleteById(id);
+            LOGGER.info("Deleted student entity with id: " + id);
+        } else {
+            LOGGER.info("Delete student entity failed. Invalid id : " + id + " for deleting student entity");
+            LOGGER.warn("Delete student entity failed. Invalid id : " + id + " for deleting student entity");
+            throw new UnsupportedOperationException("invalid id: " + id + " for deleting student entity");
+
+        }
+
+        return id;
+    }
    /* List<Student> students = studentRepository.findAll();
     Optional<Student> youngestStudent = students.stream()
             .reduce((student1, student2)
@@ -80,4 +139,6 @@ public class StudentServiceImpl implements StudentService {
                     ? student1 : student2);
     // Displaying the longest String
         youngestStudent.ifPresent(System.out::println);*/
+
+
 }

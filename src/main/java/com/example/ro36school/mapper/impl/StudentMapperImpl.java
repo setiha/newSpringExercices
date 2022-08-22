@@ -1,5 +1,6 @@
 package com.example.ro36school.mapper.impl;
 
+import com.example.ro36school.dto.StudentCreateDTO;
 import com.example.ro36school.dto.StudentDTO;
 import com.example.ro36school.entity.ClassEntity;
 import com.example.ro36school.entity.Student;
@@ -34,4 +35,26 @@ public class StudentMapperImpl implements StudentMapper {
                 .build();
         return dto;
     }
+
+    @Override
+    public Student toEntity(StudentCreateDTO createDTO) {
+        return Student.builder()
+
+                .firstName(createDTO.getFirstName())
+
+                .lastName(createDTO.getLastName())
+
+                .dateOfBirth(createDTO.getDateOfBirth())
+
+                .email(createDTO.getEmail())
+
+                .userPassword(createDTO.getUserPassword())
+
+                .classId(createDTO.getClassId())
+
+                .build();
+
+    }
+
+
 }

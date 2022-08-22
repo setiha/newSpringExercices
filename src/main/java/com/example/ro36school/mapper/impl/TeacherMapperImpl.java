@@ -1,5 +1,6 @@
 package com.example.ro36school.mapper.impl;
 
+import com.example.ro36school.dto.TeacherCreateDTO;
 import com.example.ro36school.dto.TeacherDTO;
 import com.example.ro36school.entity.Material;
 import com.example.ro36school.entity.Teacher;
@@ -31,5 +32,20 @@ public class TeacherMapperImpl implements TeacherMapper {
                 .salary(entity.getSalary())
                 .build();
         return dto;
+    }
+
+    @Override
+    public Teacher toEntity(TeacherCreateDTO createDTO) {
+        return Teacher.builder()
+
+                .firstName(createDTO.getFirstName())
+
+                .lastName(createDTO.getLastName())
+
+                .salary(createDTO.getSalary())
+
+                .materialId(createDTO.getMaterialId())
+
+                .build();
     }
 }

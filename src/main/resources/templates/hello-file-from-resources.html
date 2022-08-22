@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en" xmnls:th="http://www.thymeleaf.org" xmlns:xmnls="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <title>Document</title>
+    <link rel="stylesheet" href="/webjars/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="/webjars/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+<body>
+<p>hello world</p>
+<h1>
+    Team member  1 <p th:text="${teamMateName}"></p>
+</h1>
+<button class="btn btn-danger">Button</button>
+<div>
+    <form method="post" th:action="@{/ro36-app/post-info}">
+        <button type="submit">
+            submit this form send request to server
+        </button>
+    </form>
+</div>
+</body>
+</html>

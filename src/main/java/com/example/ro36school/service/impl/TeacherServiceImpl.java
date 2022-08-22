@@ -1,7 +1,9 @@
 package com.example.ro36school.service.impl;
 
 
+import com.example.ro36school.dto.TeacherCreateDTO;
 import com.example.ro36school.dto.TeacherDTO;
+import com.example.ro36school.entity.Teacher;
 import com.example.ro36school.mapper.TeacherMapper;
 import com.example.ro36school.repository.TeacherRepository;
 import com.example.ro36school.service.TeacherService;
@@ -47,6 +49,14 @@ public class TeacherServiceImpl implements TeacherService {
         teachersSalaryAverage = teachersSalaryAverage / teachers.size();
 
         return teachersSalaryAverage;
+    }
+
+    @Override
+    public TeacherDTO createTeacher(TeacherCreateDTO createDTO) {
+        Teacher teacherToSave = teacherMapper.toEntity(createDTO);
+        Teacher savedTeacher = teacherRepository.save(teacherToSave);
+        TeacherDTO teacherDTO = teacherMapper.toDto(savedTeacher);
+        return teacherDTO;
     }
 
 }

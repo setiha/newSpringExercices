@@ -1,15 +1,13 @@
 package com.example.ro36school.controller;
 
 import com.example.ro36school.dto.MaterialDTO;
+import com.example.ro36school.dto.TeacherCreateDTO;
 import com.example.ro36school.dto.TeacherDTO;
 import com.example.ro36school.service.MaterialService;
 import com.example.ro36school.service.TeacherService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -42,12 +40,19 @@ public class TeacherController {
     }
 
     @GetMapping("/poorestTeacher")
-    public ResponseEntity <TeacherDTO> findPoorestTeacher() {
+    public ResponseEntity<TeacherDTO> findPoorestTeacher() {
         return ResponseEntity.ok(teacherService.findPoorestTeacher());
     }
 
     @GetMapping("/averageOfSalary")
-    public ResponseEntity <Double> findTeachersSalaryAverage() {
+    public ResponseEntity<Double> findTeachersSalaryAverage() {
         return ResponseEntity.ok(teacherService.findTeachersSalaryAverage());
+    }
+
+    @PostMapping
+    public ResponseEntity<TeacherDTO> create(@RequestBody TeacherCreateDTO createDTO) {
+        TeacherDTO createdDto = teacherService.createTeacher(createDTO);
+        return ResponseEntity.ok(createdDto);
+
     }
 }
